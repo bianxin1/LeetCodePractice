@@ -477,10 +477,11 @@ public class Solution {
         if (crray == 1) cur.next = new ListNode(crray);
         return pre.next;
     }
+
     /*给你一个字符串 s，找到 s 中最长的回文 子串。如果字符串的反序与原始字符串相同，则该字符串称为回文字符串。*/
     public String longestPalindrome(String s) {
         //单个字符直接返回
-        if (s==null||s.length()<2){
+        if (s == null || s.length() < 2) {
             return s;
         }
         //设定初值
@@ -496,24 +497,111 @@ public class Solution {
         //右边循环在外
         for (int j = 1; j < length; j++) {
             for (int i = 0; i < j; i++) {
-                if (charArray[i]!=charArray[j]){
+                if (charArray[i] != charArray[j]) {
                     dp[i][j] = false;
-                }else {
+                } else {
                     //长度为2或3设置为true
-                    if (j-i<3){
+                    if (j - i < 3) {
                         dp[i][j] = true;
-                    }else {
-                        dp[i][j]=dp[i+1][j-1];//状态转移方程dp[i][j]=dp[i+1][j-1]and s[i]==s[j]
+                    } else {
+                        dp[i][j] = dp[i + 1][j - 1];//状态转移方程dp[i][j]=dp[i+1][j-1]and s[i]==s[j]
                     }
                 }
                 //若为回文串且长度大于当前最大值则更新最大值
-                if (dp[i][j]&& j-i+1>maxLen){
-                    maxLen = j-i+1;
+                if (dp[i][j] && j - i + 1 > maxLen) {
+                    maxLen = j - i + 1;
                     begin = i;
                 }
 
             }
         }
-        return s.substring(begin,begin+maxLen);//前闭后不闭
+        return s.substring(begin, begin + maxLen);//前闭后不闭
+    }
+
+    // 将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null) {
+            return list2;
+        } else if (list2 == null) {
+            return list1;
+        } else if (list1.val <= list2.val) {
+            list1.next = mergeTwoLists(list1.next, list2);
+            return list1;
+        } else {
+            list2.next = mergeTwoLists(list1, list2.next);
+            return list2;
+        }
+    }
+
+    //    给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        if (head == null) {
+            return head;
+        }
+        ListNode slow = head;
+        ListNode fast = head;
+        for (int i = 0; i < n; i++) {
+            fast = fast.next;
+        }
+        if (fast == null) return head.next;
+        while (fast.next != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        slow.next = slow.next.next;
+        return head;
+    }
+
+    //    给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
+    public ListNode swapPairs(ListNode head) {
+        if (head==null){
+            return head;
+        }
+        if (head.next==null){
+            return head;
+        }
+        ListNode t = swapPairs(head.next.next);
+        ListNode l1 = head;
+        ListNode l2 = head.next;
+        l1.next =t;
+        l2.next =l1;
+        return l2;
+
+    }
+    /*给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
+    你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换*/
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode tmp = head;
+        ListNode p = null;
+        for (int i = 0; i < k-1; i++) {
+            if (head.next==null){
+                return tmp;
+            }
+            head = head.next;
+        }
+        ListNode cur = head;
+        if (head.next==null){
+            p= reverseListDiGui2(tmp,p);
+            return p;
+        }else {
+        head = head.next;
+        p = reverseKGroup(head,k);
+        cur.next = p;
+        p= reverseListDiGui2(tmp,p);
+        return p;}
+    }
+    private ListNode reverseListDiGui2(ListNode head,ListNode p) {
+        ListNode res = recur2(head,null,p);
+        head.next=p;
+        return res;
+
+    }
+
+    private ListNode recur2(ListNode nex, ListNode pre,ListNode p) {
+        if (nex == p) return pre;
+        ListNode res = recur2(nex.next, nex,p);
+        nex.next = pre;
+        return res;
     }
 }
+
