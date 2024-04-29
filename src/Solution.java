@@ -554,54 +554,91 @@ public class Solution {
 
     //    给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。
     public ListNode swapPairs(ListNode head) {
-        if (head==null){
+        if (head == null) {
             return head;
         }
-        if (head.next==null){
+        if (head.next == null) {
             return head;
         }
         ListNode t = swapPairs(head.next.next);
         ListNode l1 = head;
         ListNode l2 = head.next;
-        l1.next =t;
-        l2.next =l1;
+        l1.next = t;
+        l2.next = l1;
         return l2;
 
     }
+
     /*给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。k 是一个正整数，它的值小于或等于链表的长度。如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
     你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换*/
     public ListNode reverseKGroup(ListNode head, int k) {
         ListNode tmp = head;
         ListNode p = null;
-        for (int i = 0; i < k-1; i++) {
-            if (head.next==null){
+        for (int i = 0; i < k - 1; i++) {
+            if (head.next == null) {
                 return tmp;
             }
             head = head.next;
         }
         ListNode cur = head;
-        if (head.next==null){
-            p= reverseListDiGui2(tmp,p);
+        if (head.next == null) {
+            p = reverseListDiGui2(tmp, p);
             return p;
-        }else {
-        head = head.next;
-        p = reverseKGroup(head,k);
-        cur.next = p;
-        p= reverseListDiGui2(tmp,p);
-        return p;}
+        } else {
+            head = head.next;
+            p = reverseKGroup(head, k);
+            cur.next = p;
+            p = reverseListDiGui2(tmp, p);
+            return p;
+        }
     }
-    private ListNode reverseListDiGui2(ListNode head,ListNode p) {
-        ListNode res = recur2(head,null,p);
-        head.next=p;
+
+    private ListNode reverseListDiGui2(ListNode head, ListNode p) {
+        ListNode res = recur2(head, null, p);
+        head.next = p;
         return res;
 
     }
 
-    private ListNode recur2(ListNode nex, ListNode pre,ListNode p) {
+    private ListNode recur2(ListNode nex, ListNode pre, ListNode p) {
         if (nex == p) return pre;
-        ListNode res = recur2(nex.next, nex,p);
+        ListNode res = recur2(nex.next, nex, p);
         nex.next = pre;
         return res;
+    }
+
+    /*
+        给你一个长度为 n 的链表，每个节点包含一个额外增加的随机指针 random ，该指针可以指向链表中的任何节点或空节点。
+    */
+    class Node {
+        int val;
+        Node next;
+        Node random;
+
+        public Node(int val) {
+            this.val = val;
+            this.next = null;
+            this.random = null;
+        }
+    }
+
+    public Node copyRandomList(Node head) {
+        if (head==null) {
+            return head;
+        }
+        HashMap<Node,Node> map = new HashMap<>();
+        Node cur = head;
+        while (cur!=null){
+            map.put(cur,new Node(cur.val));
+            cur=cur.next;
+        }
+        cur = head;
+        while (cur!=null){
+            map.get(cur).next=map.get(cur.next);
+            map.get(cur).random=map.get(cur.random);
+            cur=cur.next;
+        }
+        return map.get(head);
     }
 }
 
