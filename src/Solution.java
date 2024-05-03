@@ -623,22 +623,99 @@ public class Solution {
     }
 
     public Node copyRandomList(Node head) {
-        if (head==null) {
+        if (head == null) {
             return head;
         }
-        HashMap<Node,Node> map = new HashMap<>();
+        HashMap<Node, Node> map = new HashMap<>();
         Node cur = head;
-        while (cur!=null){
-            map.put(cur,new Node(cur.val));
-            cur=cur.next;
+        while (cur != null) {
+            map.put(cur, new Node(cur.val));
+            cur = cur.next;
         }
         cur = head;
-        while (cur!=null){
-            map.get(cur).next=map.get(cur.next);
-            map.get(cur).random=map.get(cur.random);
-            cur=cur.next;
+        while (cur != null) {
+            map.get(cur).next = map.get(cur.next);
+            map.get(cur).random = map.get(cur.random);
+            cur = cur.next;
         }
         return map.get(head);
     }
+
+    /*给你链表的头结点 head ，请将其按 升序 排列并返回 排序后的链表 。*/
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        int length = 0;
+        ListNode node = head;
+        while (node != null) {
+            node = node.next;
+            length++;
+        }
+        //存储结果
+        ListNode dummy = new ListNode(0, head);
+        for (int intv = 1; intv < length; intv <<= 1) {
+            ListNode prev = dummy;
+            ListNode cur = dummy.next;
+            while (cur != null) {
+                ListNode head_1 = cur;
+                for (int i = 1; i < intv && cur != null && cur.next != null; i++) {
+                    cur = cur.next;
+
+                }
+                //分割第一段
+                ListNode head_2 = cur.next;
+                cur.next = null;
+                cur = head_2;
+                for (int i = 1; i < intv && cur != null && cur.next != null; i++) {
+                    cur = cur.next;
+                }
+                //第二个连边可能为空
+                ListNode next = null;
+                if (cur != null) {
+                    next = cur.next;
+                    cur.next = null;
+                }
+                ListNode merge = mergeTwoLists(head_1, head_2);
+                prev.next = merge;
+                while (prev.next != null) {
+                    prev = prev.next;
+                }
+                cur = next;
+            }
+        }
+        return dummy.next;
+    }
+
+    /*
+        给你一个链表数组，每个链表都已经按升序排列。请你将所有链表合并到一个升序链表中，返回合并后的链表。
+    */
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists==null||lists.length==0){
+            return null;
+        }
+        PriorityQueue<ListNode> queue = new PriorityQueue(new Comparator<ListNode>() {
+            public int compare(ListNode o1, ListNode o2) {
+                return (o1.val - o2.val);
+            }
+        });
+        for(int i=0;i<lists.length;i++) {
+            while(lists[i] != null) {
+                queue.add(lists[i]);
+                lists[i] = lists[i].next;
+            }
+        }
+        ListNode dummy = new ListNode(-1);
+        ListNode head = dummy;
+        //从堆中不断取出元素，并将取出的元素串联起来
+        while( !queue.isEmpty() ) {
+            dummy.next = queue.poll();
+            dummy = dummy.next;
+        }
+        dummy.next = null;
+        return head.next;
+    }
+
 }
+
 
